@@ -19,10 +19,11 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #f4f6f8, #dfe6ee);
+      padding: 20px;
     }
 
     .container {
-      width: 90%;
+      width: 100%;
       max-width: 900px;
       background: #ffffff;
       border-radius: 24px;
@@ -51,20 +52,31 @@
       margin-bottom: 40px;
     }
 
+    .botoes {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
     button {
-      background-color: #dc3545;
-      color: #fff;
       border: none;
-      padding: 16px 36px;
-      font-size: 1.2rem;
+      padding: 16px 32px;
+      font-size: 1.1rem;
       border-radius: 12px;
       cursor: pointer;
       transition: 0.2s ease;
+      font-weight: bold;
     }
 
-    button:hover {
-      transform: scale(1.05);
+    .btn-reiniciar {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-reiniciar:hover {
       background-color: #bb2d3b;
+      transform: scale(1.05);
     }
 
     @media (max-width: 768px) {
@@ -79,6 +91,14 @@
       .dias {
         font-size: 1.4rem;
       }
+
+      button {
+        width: 100%;
+      }
+
+      .botoes {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -87,11 +107,14 @@
     <h1>Dias sem a Bea faltar</h1>
     <div class="contador" id="contador">20</div>
     <div class="dias">dias</div>
-    <button id="btnReiniciar">Reiniciar</button>
+
+    <div class="botoes">
+      <button class="btn-reiniciar" id="btnReiniciar">Reiniciar</button>
+    </div>
   </div>
 
   <script>
-    const STORAGE_KEY = "contadorBea";
+    const STORAGE_KEY = "diasSemBeaFaltarAutomatico";
 
     function hojeSemHora() {
       const hoje = new Date();
@@ -104,7 +127,7 @@
       return Math.floor((dataFinal - dataInicial) / umDia);
     }
 
-    function inicializarContador() {
+    function obterDados() {
       const dadosSalvos = localStorage.getItem(STORAGE_KEY);
 
       if (!dadosSalvos) {
@@ -121,7 +144,7 @@
     }
 
     function atualizarContador() {
-      const dados = inicializarContador();
+      const dados = obterDados();
       const dataBase = new Date(dados.dataBase);
       const hoje = hojeSemHora();
 
