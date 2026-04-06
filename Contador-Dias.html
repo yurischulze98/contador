@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dias sem a Bea faltar</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f4f6f8, #dfe6ee);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      padding: 60px 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      color: #1f1f1f;
+      margin-bottom: 35px;
+    }
+
+    .contador {
+      font-size: 7rem;
+      font-weight: bold;
+      color: #0d6efd;
+      line-height: 1;
+      margin-bottom: 15px;
+    }
+
+    .dias {
+      font-size: 2rem;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    button {
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 16px 36px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background-color: #bb2d3b;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .contador {
+        font-size: 4.8rem;
+      }
+
+      .dias {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dias sem a Bea faltar</h1>
+    <div class="contador" id="contador">20</div>
+    <div class="dias">dias</div>
+    <button id="btnReiniciar">Reiniciar</button>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "contadorBea";
+
+    function hojeSemHora() {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      return hoje;
+    }
+
+    function diferencaEmDias(dataInicial, dataFinal) {
+      const umDia = 1000 * 60 * 60 * 24;
+      return Math.floor((dataFinal - dataInicial) / umDia);
+    }
+
+    function inicializarContador() {
+      const dadosSalvos = localStorage.getItem(STORAGE_KEY);
+
+      if (!dadosSalvos) {
+        const dadosIniciais = {
+          baseDias: 20,
+          dataBase: hojeSemHora().toISOString()
+        };
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dadosIniciais));
+        return dadosIniciais;
+      }
+
+      return JSON.parse(dadosSalvos);
+    }
+
+    function atualizarContador() {
+      const dados = inicializarContador();
+      const dataBase = new Date(dados.dataBase);
+      const hoje = hojeSemHora();
+
+      const diasPassados = diferencaEmDias(dataBase, hoje);
+      const totalDias = dados.baseDias + diasPassados;
+
+      document.getElementById("contador").textContent = totalDias;
+    }
+
+    function reiniciarContador() {
+      const confirmar = confirm("Deseja realmente reiniciar o contador?");
+      if (!confirmar) return;
+
+      const novosDados = {
+        baseDias: 0,
+        dataBase: hojeSemHora().toISOString()
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(novosDados));
+      atualizarContador();
+    }
+
+    document.getElementById("btnReiniciar").addEventListener("click", reiniciarContador);
+
+    atualizarContador();
+  </script>
+</body>
+</html>
